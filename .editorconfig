@@ -1,5 +1,11 @@
 [*]
+end_of_line = lf
 indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
 
-[*.{ts,vue}]
+[*.json]
+insert_final_newline = false
+
+[*.{js,json,ts,vue}]
 indent_size = 2
