@@ -1,18 +1,75 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import Farm from './components/Farm.vue';
-import WorldTree from './components/WorldTree.vue';
+import { computed, onMounted } from 'vue'
+import { useQuasar } from 'quasar'
+import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 
-const token = ref('');
-const hasToken = computed(() => token.value !== '')
+import LoginDialog from './components/LoginDialog/LoginDialog.vue'
+
+const $q = useQuasar()
+const route = useRoute()
+const store = useStore()
+
+store.commit('session/setTokenFromCookie')
+
+const isLoggedIn = computed(() => store.state.session.isLoggedIn)
+const isFetching = computed(() => store.state.session.isFetching)
+
+function showLoginDialog() {
+  store.commit('loginDialog/show')
+}
+
+function confirmLogout() {
+  $q.dialog({
+    title: 'Logout',
+    message: 'Would you like to logout?',
+    cancel: true,
+  }).onOk(() => {
+    store.commit('session/logout')
+
+    $q.notify({
+      message: 'Logout successful',
+      type: 'positive',
+    })
+  })
+}
+
+onMounted(() => {
+  store.dispatch('session/getFarmStatus')
+})
 </script>
 
 <template>
-  <Farm :token="token" />
-  <WorldTree :token="token" />
-  
-  <input v-model="token" type="text" />
-  <div v-text="hasToken ? 'yay token' : 'oh hell nah'" />
+  <QLayout view="hHh LpR fFf">
+    <QHeader elevated class="bg-primary text-white">
+      <QToolbar>
+        <QToolbarTitle> PvUtils </QToolbarTitle>
+
+        <QBtn
+          v-if="isLoggedIn"
+          push
+          color="secondary"
+          icon="mdi-logout-variant"
+          label="Logout"
+          @click="confirmLogout"
+        />
+
+        <QBtn
+          v-else
+          push
+          color="secondary"
+          icon="mdi-login-variant"
+          label="Login"
+          :disable="isFetching"
+          @click="showLoginDialog"
+        />
+      </QToolbar>
+    </QHeader>
+
+    <QPageContainer>
+      <RouterView :key="route.fullPath" />
+    </QPageContainer>
+
+    <LoginDialog />
+  </QLayout>
 </template>
