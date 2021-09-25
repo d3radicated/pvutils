@@ -1,0 +1,5 @@
+[*]
+indent_style = space
+
+[*.{ts,vue}]
+indent_size = 2
