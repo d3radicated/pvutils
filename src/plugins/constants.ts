@@ -6,7 +6,7 @@ export const statusCodes = {
 }
 
 export default {
-  install(app: App, options: object) {
+  install(app: App): void {
     app.provide('constants', {
       statusCodes,
     })

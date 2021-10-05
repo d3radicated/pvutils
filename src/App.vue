@@ -2,21 +2,24 @@
 import { computed, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
 
-import LoginDialog from './components/LoginDialog/LoginDialog.vue'
+import LoginDialog from './components/LoginDialog.vue'
+import { useSessionStore } from './store/session'
+import { useLoginDialogStore } from './store/loginDialog'
 
 const $q = useQuasar()
 const route = useRoute()
-const store = useStore()
 
-store.commit('session/setTokenFromCookie')
+const loginDialog = useLoginDialogStore()
+const session = useSessionStore()
 
-const isLoggedIn = computed(() => store.state.session.isLoggedIn)
-const isFetching = computed(() => store.state.session.isFetching)
+session.setTokenFromCookie()
+
+const isLoggedIn = computed(() => session.isLoggedIn)
+const isLoggingIn = computed(() => session.isLoggingIn)
 
 function showLoginDialog() {
-  store.commit('loginDialog/show')
+  loginDialog.show()
 }
 
 function confirmLogout() {
@@ -25,7 +28,7 @@ function confirmLogout() {
     message: 'Would you like to logout?',
     cancel: true,
   }).onOk(() => {
-    store.commit('session/logout')
+    session.logout()
 
     $q.notify({
       message: 'Logout successful',
@@ -35,7 +38,7 @@ function confirmLogout() {
 }
 
 onMounted(() => {
-  store.dispatch('session/getFarmStatus')
+  session.getFarmStatus()
 })
 </script>
 
@@ -60,7 +63,7 @@ onMounted(() => {
           color="secondary"
           icon="mdi-login-variant"
           label="Login"
-          :disable="isFetching"
+          :disable="isLoggingIn"
           @click="showLoginDialog"
         />
       </QToolbar>

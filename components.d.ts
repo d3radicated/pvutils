@@ -4,19 +4,30 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Card: typeof import('./src/components/Farm/Card.vue')['default']
+    Farm: typeof import('./src/components/Farm/Farm.vue')['default']
+    LoginDialog: typeof import('./src/components/LoginDialog.vue')['default']
+    QAvatar: typeof import('quasar')['QAvatar']
+    QBadge: typeof import('quasar')['QBadge']
     QBtn: typeof import('quasar')['QBtn']
     QCard: typeof import('quasar')['QCard']
     QCardActions: typeof import('quasar')['QCardActions']
     QCardSection: typeof import('quasar')['QCardSection']
+    QChip: typeof import('quasar')['QChip']
+    QCircularProgress: typeof import('quasar')['QCircularProgress']
     QDialog: typeof import('quasar')['QDialog']
     QHeader: typeof import('quasar')['QHeader']
+    QIcon: typeof import('quasar')['QIcon']
+    QImg: typeof import('quasar')['QImg']
     QInput: typeof import('quasar')['QInput']
     QLayout: typeof import('quasar')['QLayout']
+    QLinearProgress: typeof import('quasar')['QLinearProgress']
     QPageContainer: typeof import('quasar')['QPageContainer']
     QSpace: typeof import('quasar')['QSpace']
     QToolbar: typeof import('quasar')['QToolbar']
     QToolbarTitle: typeof import('quasar')['QToolbarTitle']
+    WorldTree: typeof import('./src/components/WorldTree.vue')['default']
   }
 }
 
-export {}
+export { }
