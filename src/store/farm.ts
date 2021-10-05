@@ -75,12 +75,6 @@ export const useFarmStore = defineStore('farm', {
       loading: false,
     },
 
-  getters: {
-    getEstimatedHarvest: () => (farm: Farm) => {
-      return null
-    },
-  },
-
   actions: {
     clearFarms() {
       this.farms = []

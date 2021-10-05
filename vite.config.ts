@@ -6,12 +6,14 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/pvutils/',
+
   plugins: [
+    vue(),
     Components({
       dts: true,
       resolvers: [QuasarResolver()],
     }),
-    vue(),
   ],
 
   resolve: {
