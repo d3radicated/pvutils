@@ -1,4 +1,9 @@
+import _ from 'lodash'
 import { defineStore } from 'pinia'
+import { LocalStorage } from 'quasar'
+import { collection, getDocs } from 'firebase/firestore'
+import dayjs from '@/plugins/dayjs'
+import { db } from '@/plugins/firebase'
 import { Elements } from './farm'
 
 export enum Seasons {
@@ -10,7 +15,7 @@ export enum Seasons {
 
 export enum WeatherEvents {
   Cloudy = 'Cloudy',
-  ColdWave = 'Cold wave',
+  ColdWave = 'Cold Wave',
   CoronalMassEjection = 'Coronal Mass Ejection',
   Earthquake = 'Earthquake',
   Flood = 'Flood',
@@ -40,10 +45,12 @@ export type Effects = {
   [element in Elements]?: number
 }
 
+export type DateEvents = {
+  [date: string]: WeatherEvents
+}
+
 export interface State {
-  readonly dateEvents: {
-    [date: string]: WeatherEvents
-  }
+  dateEvents: DateEvents
 
   readonly weatherEvents: {
     [event in WeatherEvents]: Effects
@@ -53,25 +60,7 @@ export interface State {
 export const useWeatherStore = defineStore('weather', {
   state: () =>
     <State>{
-      dateEvents: {
-        '2021-09-19': WeatherEvents.Snowy,
-        '2021-09-20': WeatherEvents.ColdWave,
-        '2021-09-21': WeatherEvents.MagneticReconnection,
-        '2021-09-22': WeatherEvents.CoronalMassEjection,
-        '2021-09-23': WeatherEvents.SolarFlares,
-        '2021-09-24': WeatherEvents.ColdWave,
-        '2021-09-25': WeatherEvents.Earthquake,
-        '2021-09-26': WeatherEvents.Hurricanes,
-        '2021-09-27': WeatherEvents.Volcano,
-        '2021-09-28': WeatherEvents.IronRain,
-        '2021-09-29': WeatherEvents.Sunny,
-        '2021-09-30': WeatherEvents.LocustsSwarm,
-        '2021-10-01': WeatherEvents.Malaria,
-        '2021-10-02': WeatherEvents.IronRain,
-        '2021-10-03': WeatherEvents.HeatWave,
-        '2021-10-04': WeatherEvents.Malaria,
-        '2021-10-05': WeatherEvents.Earthquake,
-      },
+      dateEvents: {},
 
       weatherEvents: {
         [WeatherEvents.Cloudy]: {
@@ -204,5 +193,38 @@ export const useWeatherStore = defineStore('weather', {
 
         return event ? state.weatherEvents[event] : {}
       },
+
+    hasEventToday: (state) => {
+      return dayjs.utc().format('YYYY-MM-DD') in state.dateEvents
+    },
+  },
+
+  actions: {
+    async fetchDateEvents() {
+      const dateEventsCollection = collection(db, 'date_events')
+      const snapshot = await getDocs(dateEventsCollection)
+
+      const dateEvents = _.chain(snapshot.docs)
+        .keyBy((document) => {
+          return document.id
+        })
+        .mapValues((document) => {
+          return document.get('weather_event')
+        })
+        .value()
+
+      this.setDateEvents(dateEvents)
+    },
+
+    getDateEventsFromStorage() {
+      this.dateEvents =
+        LocalStorage.getItem<DateEvents>('Pvu-Date-Events') || {}
+    },
+
+    setDateEvents(events: Record<string, WeatherEvents>) {
+      this.dateEvents = events
+
+      LocalStorage.set('Pvu-Date-Events', this.dateEvents)
+    },
   },
 })

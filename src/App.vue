@@ -3,20 +3,28 @@ import { computed, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 
-import LoginDialog from './components/LoginDialog.vue'
-import { useSessionStore } from './store/session'
-import { useLoginDialogStore } from './store/loginDialog'
+import LoginDialog from '@/components/LoginDialog.vue'
+import { useSessionStore } from '@/store/session'
+import { useLoginDialogStore } from '@/store/loginDialog'
+import { useWeatherStore } from '@/store/weather'
 
 const $q = useQuasar()
 const route = useRoute()
 
 const loginDialog = useLoginDialogStore()
 const session = useSessionStore()
-
-session.setTokenFromCookie()
+const weather = useWeatherStore()
 
 const isLoggedIn = computed(() => session.isLoggedIn)
 const isLoggingIn = computed(() => session.isLoggingIn)
+const hasEventToday = computed(() => weather.hasEventToday)
+
+session.setTokenFromCookie()
+weather.getDateEventsFromStorage()
+
+if (!hasEventToday.value) {
+  weather.fetchDateEvents()
+}
 
 function showLoginDialog() {
   loginDialog.show()
