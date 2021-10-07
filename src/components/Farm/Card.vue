@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { find } from 'lodash'
-import { computed, defineProps, PropType } from 'vue'
-import { Elements, Farm } from '@/store/farm'
-import { diffInSeconds, fromNowHumanized } from '@/helpers/dateTime'
+import { computed, PropType } from 'vue'
+import { Farm } from '@/store/farm'
+import { diffInSeconds } from '@/helpers/dateTime'
 import { getEstimatedHarvest } from '@/helpers/farm'
+import { useTimeStore } from '@/store/time'
 
 const props = defineProps({
   farm: {
@@ -12,7 +13,10 @@ const props = defineProps({
   },
 })
 
+const timeStore = useTimeStore()
+
 const farm = computed(() => props.farm)
+const time = computed(() => timeStore.now.unix())
 
 const estimatedHarvest = computed(() => getEstimatedHarvest(farm.value))
 const plantSize = computed(() => (farm.value.isTempPlant ? '64px' : '48px'))
@@ -40,6 +44,8 @@ function getTool(type: string) {
 function getToolCount(type: string) {
   return find(farm.value.activeTools, (tool) => tool.type === type)?.count || 0
 }
+
+timeStore.sync()
 </script>
 
 <template>
@@ -91,34 +97,6 @@ function getToolCount(type: string) {
 
       <q-card-section>
         <div>
-          <q-chip color="orange">
-            <q-avatar color="white" icon="mdi-pot" text-color="orange" />
-            {{ fromNowHumanized(getTool('POT')?.endTime) }}
-          </q-chip>
-        </div>
-
-        <div>
-          <q-chip color="green">
-            <q-avatar color="white" icon="mdi-sprout" text-color="green" />
-            {{ fromNowHumanized(farm.harvestTime) }}
-          </q-chip>
-        </div>
-
-        <div>
-          <q-chip color="light-blue" size="sm">
-            <q-avatar color="white" icon="mdi-water" text-color="light-blue" />
-
-            <template v-if="farm.needWater">
-              Needs {{ 2 - getToolCount('WATER') }}
-            </template>
-
-            <template v-else>
-              {{ fromNowHumanized(getTool('WATER')?.endTime) }}
-            </template>
-          </q-chip>
-        </div>
-
-        <div>
           <q-chip color="blue">
             <q-avatar color="white" icon="mdi-flash" text-color="blue" />
 
@@ -126,9 +104,47 @@ function getToolCount(type: string) {
           </q-chip>
         </div>
 
-        <div>
-          <q-chip color="blue">
-            <q-avatar color="white" icon="mdi-flash-alert" text-color="blue" />
+        <div v-for="(chip, _) in farm.chipConfigs" :key="_">
+          <q-chip :color="chip.color">
+            <q-avatar
+              color="white"
+              :icon="chip.icon"
+              :text-color="chip.color"
+            />
+
+            <span :key="time" v-text="chip.label()" />
+
+            <q-tooltip
+              v-if="chip.tooltip && chip.tooltip()"
+              anchor="center right"
+              self="center left"
+              transition-show="jump-right"
+              transition-hide="jump-left"
+            >
+              {{ chip.tooltip() }}
+            </q-tooltip>
+          </q-chip>
+        </div>
+
+        <div v-for="(tool, _) in farm.activeTools" :key="_">
+          <q-chip size="sm" :color="tool.chipConfig.color">
+            <q-avatar
+              color="white"
+              :icon="tool.chipConfig.icon"
+              :text-color="tool.chipConfig.color"
+            />
+
+            <span :key="time" v-text="tool.chipConfig.label()" />
+
+            <q-tooltip
+              v-if="tool.chipConfig.tooltip && tool.chipConfig.tooltip()"
+              anchor="center right"
+              self="center left"
+              transition-show="jump-right"
+              transition-hide="jump-left"
+            >
+              {{ tool.chipConfig.tooltip() }}
+            </q-tooltip>
           </q-chip>
         </div>
       </q-card-section>

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import { pvuInstance } from '@/plugins/axios'
+import { pvuInstance, Response } from '@/plugins/axios'
 import { useSessionStore } from './session'
+import { getFarmChipConfigs, getToolChipConfig } from '@/helpers/farm'
 
 export enum Elements {
   Dark = 'dark',
@@ -14,24 +15,21 @@ export enum Elements {
   Wind = 'wind',
 }
 
+export interface ChipConfig {
+  color: string
+  icon: string
+  label: () => string
+  tooltip?: () => string | null
+}
+
 export interface Tool {
   id: number
   type: string
   count: number
   startTime: string
   endTime: string
-}
 
-export interface Water extends Tool {
-  type: 'WATER'
-}
-
-export interface Pot extends Tool {
-  type: 'POT'
-}
-
-export interface Greenhouse extends Tool {
-  type: 'GREENHOUSE'
+  chipConfig: ChipConfig
 }
 
 export interface FarmConfig {
@@ -53,7 +51,7 @@ export interface Plant {
 
 export interface Farm {
   _id: string
-  activeTools: Array<Water | Pot | Greenhouse>
+  activeTools: Tool[]
   harvestTime: string
   inGreenhouse: boolean
   isTempPlant: boolean
@@ -61,6 +59,8 @@ export interface Farm {
   plant: Plant
   stage: 'farming' | 'cancelled'
   startTime: string
+
+  chipConfigs: ChipConfig[]
 }
 
 export interface State {
@@ -84,11 +84,20 @@ export const useFarmStore = defineStore('farm', {
       const session = useSessionStore()
 
       return pvuInstance
-        .get('farms', {
+        .get<Response<Farm[]>>('farms', {
           headers: session.headers,
         })
         .then(({ data }) => {
-          this.farms = data.data
+          this.farms = data.data.map((farm) => {
+            farm.chipConfigs = getFarmChipConfigs(farm)
+            farm.activeTools = farm.activeTools.map((tool) => {
+              tool.chipConfig = getToolChipConfig(tool, farm)
+
+              return tool
+            })
+
+            return farm
+          })
         })
     },
   },

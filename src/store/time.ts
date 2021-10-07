@@ -21,9 +21,11 @@ export const useTimeStore = defineStore('time', {
     },
 
     sync() {
-      this.interval = window.setInterval(() => {
-        this.now = dayjs()
-      }, 1000)
+      if (!this.interval) {
+        this.interval = window.setInterval(() => {
+          this.now = dayjs()
+        }, 1000)
+      }
     },
   },
 })

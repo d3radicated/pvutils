@@ -26,6 +26,7 @@ declare module 'vue' {
     QSpace: typeof import('quasar')['QSpace']
     QToolbar: typeof import('quasar')['QToolbar']
     QToolbarTitle: typeof import('quasar')['QToolbarTitle']
+    QTooltip: typeof import('quasar')['QTooltip']
     WorldTree: typeof import('./src/components/WorldTree.vue')['default']
   }
 }
