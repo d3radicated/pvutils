@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import Card from './Card.vue'
-// import moment from 'moment'
 import { computed, watch } from 'vue'
 import { useSessionStore } from '@/store/session'
 import { useFarmStore } from '@/store/farm'
+import Card from './Card.vue'
 
 const sessionStore = useSessionStore()
 const farmStore = useFarmStore()
@@ -25,8 +24,8 @@ watch(
 </script>
 
 <template>
-  <div>
-    <div class="row q-gutter-sm q-px-2">
+  <div class="q-pa-md">
+    <div class="row q-gutter-md">
       <div v-for="farm in farms" :key="farm._id" class="col-12">
         <card :farm="farm" />
       </div>

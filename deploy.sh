@@ -18,3 +18,4 @@ git commit -m 'Deploy'
 git push -f jrcGithub:d3radicated/pvutils.git master:gh-pages
 
 cd -
+rm -rf dist
