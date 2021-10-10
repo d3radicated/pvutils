@@ -51,12 +51,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <QLayout view="hHh LpR fFf">
-    <QHeader elevated class="bg-primary text-white">
-      <QToolbar>
-        <QToolbarTitle> PvUtils </QToolbarTitle>
+  <q-layout view="hHh LpR fFf">
+    <q-header elevated class="bg-primary text-white">
+      <q-toolbar>
+        <q-toolbar-title> PvUtils </q-toolbar-title>
 
-        <QBtn
+        <q-btn
           v-if="isLoggedIn"
           push
           color="secondary"
@@ -65,7 +65,7 @@ onMounted(() => {
           @click="confirmLogout"
         />
 
-        <QBtn
+        <q-btn
           v-else
           push
           color="secondary"
@@ -74,13 +74,13 @@ onMounted(() => {
           :disable="isLoggingIn"
           @click="showLoginDialog"
         />
-      </QToolbar>
-    </QHeader>
+      </q-toolbar>
+    </q-header>
 
-    <QPageContainer>
-      <RouterView :key="route.fullPath" />
-    </QPageContainer>
+    <q-page-container>
+      <router-view :key="route.fullPath" />
+    </q-page-container>
 
-    <LoginDialog />
-  </QLayout>
+    <login-dialog />
+  </q-layout>
 </template>

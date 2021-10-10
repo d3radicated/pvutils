@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia'
 import { pvuInstance, Response } from '@/plugins/axios'
 import { useSessionStore } from './session'
-import { getFarmChipConfigs, getToolChipConfig } from '@/helpers/farm'
+import {
+  addMissingTools,
+  getFarmChipConfigs,
+  getToolChipConfig,
+} from '@/helpers/farm'
 
 export enum Elements {
   Dark = 'dark',
@@ -24,7 +28,7 @@ export interface ChipConfig {
 
 export interface Tool {
   id: number
-  type: string
+  type: 'POT' | 'WATER' | 'GREENHOUSE'
   count: number
   startTime: string
   endTime: string
@@ -72,6 +76,7 @@ export const useFarmStore = defineStore('farm', {
   state: () =>
     <State>{
       farms: [],
+
       loading: false,
     },
 
@@ -80,25 +85,31 @@ export const useFarmStore = defineStore('farm', {
       this.farms = []
     },
 
-    fetchFarms() {
+    async fetchFarms() {
       const session = useSessionStore()
 
-      return pvuInstance
-        .get<Response<Farm[]>>('farms', {
+      this.loading = true
+
+      try {
+        const { data } = await pvuInstance.get<Response<Farm[]>>('farms', {
           headers: session.headers,
         })
-        .then(({ data }) => {
-          this.farms = data.data.map((farm) => {
-            farm.chipConfigs = getFarmChipConfigs(farm)
-            farm.activeTools = farm.activeTools.map((tool) => {
-              tool.chipConfig = getToolChipConfig(tool, farm)
 
-              return tool
-            })
+        this.farms = data.data.map((farm) => {
+          farm.chipConfigs = getFarmChipConfigs(farm)
+          farm.activeTools = addMissingTools(farm.activeTools).map((tool) => {
+            tool.chipConfig = getToolChipConfig(tool, farm)
 
-            return farm
+            return tool
           })
+
+          return farm
         })
+      } catch (e) {
+        //
+      } finally {
+        this.loading = false
+      }
     },
   },
 })

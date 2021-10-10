@@ -1,7 +1,22 @@
+import { some } from 'lodash'
 import dayjs from '@/plugins/dayjs'
 import { Farm, Tool, ChipConfig } from '@/store/farm'
 import { useWeatherStore } from '@/store/weather'
 import { fromNowHumanized, wholeDatesBetween } from './dateTime'
+
+export function addMissingTools(tools: Tool[]): Tool[] {
+  if (!some(tools, ['type', 'WATER'])) {
+    tools.splice(1, 0, <Tool>{
+      id: 2,
+      type: 'WATER',
+      count: 0,
+      startTime: dayjs().startOf('day').toJSON(),
+      endTime: dayjs().endOf('day').toJSON(),
+    })
+  }
+
+  return tools
+}
 
 export function getEnergyPerHour(farm: Farm): number {
   return Math.round(farm.plant.farmConfig.le / farm.plant.farmConfig.hours)

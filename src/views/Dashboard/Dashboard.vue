@@ -4,13 +4,15 @@ import WorldTree from '@/components/WorldTree.vue'
 </script>
 
 <template>
-  <div class="row q-gutter-md">
-    <div class="col-12 col-md-4">
-      <farm />
-    </div>
+  <div class="fit inline-block q-pa-sm">
+    <div class="row q-col-gutter-sm">
+      <div class="col-12 col-md-4">
+        <farm />
+      </div>
 
-    <div class="col-12 col-md-3">
-      <world-tree />
+      <div class="col-12 col-md-3">
+        <world-tree />
+      </div>
     </div>
   </div>
 </template>

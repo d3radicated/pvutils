@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Field, Form } from 'vee-validate'
+import { Field, Form as VvForm } from 'vee-validate'
 import _ from 'lodash'
 import { useQuasar } from 'quasar'
 import { object, string } from 'yup'
@@ -63,27 +63,20 @@ async function login() {
 </script>
 
 <template>
-  <QDialog v-model="isVisible" persistent>
-    <QCard style="width: 480px">
-      <QCardSection class="row">
+  <q-dialog v-model="isVisible" persistent>
+    <q-card style="width: 480px">
+      <q-card-section class="row">
         <div class="text-h6">Login</div>
 
-        <QSpace />
+        <q-space />
 
-        <QBtn
-          v-close-popup
-          flat
-          round
-          icon="mdi-close"
-          size="sm"
-          :disable="submitting"
-        />
-      </QCardSection>
+        <q-btn v-close-popup flat round icon="mdi-close" size="sm" :disable="submitting" />
+      </q-card-section>
 
-      <QCardSection class="q-pt-none">
-        <Form :validation-schema="schema" @submit="login">
-          <Field v-slot="{ errorMessage, field }" name="token">
-            <QInput
+      <q-card-section class="q-pt-none">
+        <vv-form :validation-schema="schema" @submit="login">
+          <field v-slot="{ errorMessage, field }" name="token">
+            <q-input
               v-model="token"
               v-bind="field"
               autogrow
@@ -96,16 +89,15 @@ async function login() {
               :error-message="errorMessage"
             >
               <template #hint>
-                You can get the token by opening DevTools > Application >
-                Cookies.
+                You can get the token by opening DevTools > Application > Cookies.
               </template>
-            </QInput>
-          </Field>
-        </Form>
-      </QCardSection>
+            </q-input>
+          </field>
+        </vv-form>
+      </q-card-section>
 
-      <QCardActions align="right">
-        <QBtn
+      <q-card-actions align="right">
+        <q-btn
           flat
           label="Login"
           text-color="primary"
@@ -113,7 +105,7 @@ async function login() {
           :loading="submitting"
           @click="login"
         />
-      </QCardActions>
-    </QCard>
-  </QDialog>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
