@@ -5,6 +5,7 @@
 declare module 'vue' {
   export interface GlobalComponents {
     Card: typeof import('./src/components/Farm/Card.vue')['default']
+    ClosePopup: typeof import('quasar')['ClosePopup']
     Farm: typeof import('./src/components/Farm/Farm.vue')['default']
     LoginDialog: typeof import('./src/components/LoginDialog.vue')['default']
     QAvatar: typeof import('quasar')['QAvatar']

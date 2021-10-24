@@ -185,7 +185,7 @@ export function getPlantName(farm: Farm): string | number {
     return code === Number(farm.plantId.toString().substr(3, 2))
   })
 
-  return name ? startCase(name) : farm.plantId
+  return name || farm.plantId
 }
 
 export function getRarity(rarity: Rarity): string | undefined {
