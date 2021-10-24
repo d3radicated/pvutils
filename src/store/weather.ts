@@ -4,7 +4,7 @@ import { LocalStorage } from 'quasar'
 import { collection, getDocs } from 'firebase/firestore'
 import dayjs from '@/plugins/dayjs'
 import { db } from '@/plugins/firebase'
-import { Elements } from './farm'
+import { Elements } from '@/types/farm'
 
 export enum Seasons {
   Spring = 'Spring',
@@ -217,8 +217,7 @@ export const useWeatherStore = defineStore('weather', {
     },
 
     getDateEventsFromStorage() {
-      this.dateEvents =
-        LocalStorage.getItem<DateEvents>('Pvu-Date-Events') || {}
+      this.dateEvents = LocalStorage.getItem<DateEvents>('Pvu-Date-Events') || {}
     },
 
     setDateEvents(events: Record<string, WeatherEvents>) {

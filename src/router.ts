@@ -1,16 +1,16 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Dashboard from '@/views/Dashboard/Dashboard.vue'
+import FarmList from '@/views/Farm/List.vue'
 
 const routes = [
   {
-    path: '/',
-    component: Dashboard
+    path: '/farms',
+    component: FarmList,
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/'
-  }
-];
+    redirect: '/farms',
+  },
+]
 
 export default createRouter({
   history: createWebHashHistory(),

@@ -7,5 +7,5 @@ trim_trailing_whitespace = true
 [*.json]
 insert_final_newline = false
 
-[*.{js,json,ts,vue}]
+[*.{js,json,scss,ts,vue}]
 indent_size = 2
