@@ -1,28 +1,30 @@
 <script setup lang="ts">
-import { computed, PropType } from 'vue'
-import { Farm } from '@/types/farm'
+import { computed, PropType, ref } from 'vue'
 import { getPlantName, getRarity } from '@/helpers/farm'
+import { useFarmStore } from '@/store/farm'
 import { useTimeStore } from '@/store/time'
+import { Farm, Tool } from '@/types/farm'
 
-const timeStore = useTimeStore()
-
+const emit = defineEmits(['remove:crow'])
 const props = defineProps({
   farm: {
     type: Object as PropType<Farm>,
     required: true,
   },
 })
+
+const farmStore = useFarmStore()
+const timeStore = useTimeStore()
+
+const isRemovingCrow = ref(false)
+
 const time = computed(() => timeStore.now.unix())
 
 const cardClass = computed(() => {
   return props.farm.isTempPlant ? 'bg-sunflower' : `bg-element-${props.farm.plantElement}`
 })
 
-const element = computed(() => {
-  return props.farm.plantElement || 'Sunflower'
-})
-
-const plantName = computed(() => getPlantName(props.farm))
+const element = computed(() => props.farm.plantElement || 'Sunflower')
 
 const rarity = computed(() => {
   return getRarity(props.farm.plant.rarity) || ''
@@ -39,13 +41,30 @@ const rarityClass = computed(() => {
   return null
 })
 
+function removeCrow() {
+  if (!props.farm.hasCrow) {
+    return
+  }
+
+  isRemovingCrow.value = true
+
+  farmStore
+    .applyTool(props.farm, Tool.Scarecrow)
+    .then(() => {
+      emit('remove:crow', props.farm)
+    })
+    .finally(() => {
+      isRemovingCrow.value = false
+    })
+}
+
 timeStore.sync()
 </script>
 
 <template>
   <q-card bordered class="" :class="cardClass">
     <q-card-section class="q-pb-sm">
-      <div class="text-h6" v-text="plantName" />
+      <div class="text-h6" v-text="getPlantName(props.farm)" />
 
       <div class="card__chips">
         <q-chip outline square size="sm" class="text-capitalize">
@@ -59,10 +78,19 @@ timeStore.sync()
     </q-card-section>
 
     <div class="absolute-top-right q-pt-md q-pr-md">
-      <div>
-        <q-btn outline round icon="mdi-bird" size="sm" />
+      <div v-if="props.farm.hasCrow">
+        <q-btn
+          outline
+          round
+          icon="mdi-bird"
+          size="sm"
+          :disable="isRemovingCrow"
+          :loading="isRemovingCrow"
+          @click.stop="removeCrow"
+        />
       </div>
-      <div>
+
+      <div v-if="props.farm.hasSeed">
         <q-btn outline round icon="mdi-seed" size="sm" />
       </div>
     </div>

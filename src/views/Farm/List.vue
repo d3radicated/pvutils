@@ -28,7 +28,7 @@ watch(
   <q-page padding>
     <div class="row q-col-gutter-lg">
       <div v-for="(farm, _) in farms" :key="_" class="col-12 col-md-2">
-        <card :farm="farm" />
+        <card :farm="farm" @remove:crow="farmStore.fetchFarms" />
       </div>
     </div>
   </q-page>

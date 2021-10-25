@@ -1,22 +1,8 @@
-import { find, findKey, some, startCase } from 'lodash'
+import { find, findKey } from 'lodash'
 import dayjs from '@/plugins/dayjs'
 import { useWeatherStore } from '@/store/weather'
+import { Farm, PlantName, PlantType, Rarity, Statistic, Tool } from '@/types/farm'
 import { diffForHumans, diffInSeconds, fromNowHumanized, wholeDatesBetween } from './dateTime'
-import { Farm, PlantName, PlantType, Rarity, Statistic, Tool, ToolType } from '@/types/farm'
-
-export function addMissingTools(tools: Tool[]): Tool[] {
-  if (!some(tools, ['type', 'WATER'])) {
-    tools.splice(1, 0, <Tool>{
-      id: 2,
-      type: 'WATER',
-      count: 0,
-      startTime: dayjs().startOf('day').toJSON(),
-      endTime: dayjs().endOf('day').toJSON(),
-    })
-  }
-
-  return tools
-}
 
 export function getEnergyPerHour(farm: Farm): number {
   return Math.round(farm.plant.farmConfig.le / farm.plant.farmConfig.hours)
@@ -43,7 +29,7 @@ export function getEstimatedHarvest(farm: Farm): number {
 }
 
 export function getFarmStats(farm: Farm): Statistic[] {
-  const waterTool = find(farm.activeTools, ['type', ToolType.Water])
+  const waterTool = find(farm.activeTools, ['id', Tool.Water])
 
   return [
     {

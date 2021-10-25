@@ -64,15 +64,16 @@ export enum Elements {
   Wind = 'wind',
 }
 
-export enum ToolType {
-  Pot = 'POT',
-  Water = 'WATER',
-  Greenhouse = 'GREENHOUSE',
+export enum Tool {
+  Pot = 2,
+  Water = 3,
+  Scarecrow = 4,
+  Greenhouse = 5,
 }
 
-export interface Tool {
-  id: number
-  type: ToolType
+export interface PlantTool {
+  id: Tool
+  type: string
   count: number
   startTime: string
   endTime: string
@@ -103,6 +104,7 @@ export interface Plant {
 export enum PlantState {
   Farming = 'farming',
   Cancelled = 'cancelled',
+  Paused = 'paused',
 }
 
 export interface Statistic {
@@ -119,8 +121,10 @@ export interface Statistic {
 
 export interface Farm {
   _id: string
-  activeTools: Tool[]
+  activeTools: PlantTool[]
   harvestTime: string
+  hasCrow?: boolean
+  hasSeed?: boolean
   inGreenhouse: boolean
   isTempPlant: boolean
   needWater: boolean
