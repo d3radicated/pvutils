@@ -2,8 +2,8 @@ import { App } from 'vue'
 import iconSet from 'quasar/icon-set/mdi-v6'
 import { Dialog, LocalStorage, Notify, Quasar, QuasarPluginOptions } from 'quasar'
 
-import '@mdi/font/scss/materialdesignicons.scss'
-import 'quasar/dist/quasar.sass'
+import '@quasar/extras/mdi-v6/mdi-v6.css'
+import 'quasar/src/css/index.sass'
 
 export default {
   install(app: App): void {
