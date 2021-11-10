@@ -64,7 +64,7 @@ timeStore.sync()
 <template>
   <q-card bordered class="" :class="cardClass">
     <q-card-section class="q-pb-sm">
-      <div class="text-h6" v-text="getPlantName(props.farm)" />
+      <div class="text-subtitle1 text-weight-medium" v-text="getPlantName(props.farm)" />
 
       <div class="card__chips">
         <q-chip outline square size="sm" class="text-capitalize">
@@ -168,6 +168,21 @@ timeStore.sync()
             </tr>
           </tbody>
         </q-markup-table>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <!-- <q-btn round color="light-blue" icon="mdi-water" size="sm" /> -->
+
+        <q-btn
+          v-if="props.farm.hasCrow"
+          round
+          color="grey-9"
+          icon="mdi-bird"
+          size="sm"
+          :disable="isRemovingCrow"
+          :loading="isRemovingCrow"
+          @click.stop="removeCrow"
+        />
       </q-card-section>
     </q-card>
   </q-card>

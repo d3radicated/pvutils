@@ -25,9 +25,9 @@ watch(
 </script>
 
 <template>
-  <q-page padding>
+  <q-page class="q-pa-lg">
     <div class="row q-col-gutter-lg">
-      <div v-for="(farm, _) in farms" :key="_" class="col-12 col-md-2">
+      <div v-for="(farm, _) in farms" :key="_" class="col-12 col-sm-6 col-md-4 col-lg-2">
         <card :farm="farm" @remove:crow="farmStore.fetchFarms" />
       </div>
     </div>
